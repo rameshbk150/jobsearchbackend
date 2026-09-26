@@ -25,6 +25,7 @@ app.use(
       "http://localhost:3000",
       "http://localhost:3001",
       "https://jobs-one-blond.vercel.app",
+      "https://jobs-4jjl4dwf0-rb-group-ltd.vercel.app",
     ],
     credentials: true,
   })
