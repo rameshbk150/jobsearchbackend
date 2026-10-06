@@ -19,14 +19,35 @@ const app = express();
    CORS
 ========================================= */
 
+const defaultCorsOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:5173",
+  "https://jobs-one-blond.vercel.app",
+  "https://jobs-4jjl4dwf0-rb-group-ltd.vercel.app",
+  "https://techjobsindia.netlify.app",
+];
+
+const configuredCorsOrigins = (process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const allowedCorsOrigins = new Set([
+  ...defaultCorsOrigins,
+  ...configuredCorsOrigins,
+]);
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "https://jobs-one-blond.vercel.app",
-      "https://jobs-4jjl4dwf0-rb-group-ltd.vercel.app",
-    ],
+    origin(origin, callback) {
+      if (!origin || allowedCorsOrigins.has(origin)) {
+        return callback(null, true);
+      }
+
+      console.warn(`CORS request blocked for origin: ${origin}`);
+      return callback(null, false);
+    },
     credentials: true,
   })
 );
