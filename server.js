@@ -26,6 +26,7 @@ const defaultCorsOrigins = [
   "https://jobs-one-blond.vercel.app",
   "https://jobs-4jjl4dwf0-rb-group-ltd.vercel.app",
   "https://techjobsindia.netlify.app",
+  "https://adminjobposting.netlify.app",
 ];
 
 const configuredCorsOrigins = (process.env.CORS_ORIGINS || "")
