@@ -1,5 +1,41 @@
 import db from "../config/db.js";
 
+const normalizeSkills = (value) => {
+  if (Array.isArray(value)) {
+    return value
+      .filter((skill) => typeof skill === "string")
+      .map((skill) => skill.trim())
+      .filter(Boolean);
+  }
+
+  if (typeof value !== "string" || !value.trim()) {
+    return [];
+  }
+
+  const splitSkills = (skills) =>
+    skills
+      .split(",")
+      .map((skill) => skill.trim())
+      .filter(Boolean);
+
+  try {
+    const parsed = JSON.parse(value);
+
+    if (Array.isArray(parsed)) {
+      return parsed
+        .filter((skill) => typeof skill === "string")
+        .map((skill) => skill.trim())
+        .filter(Boolean);
+    }
+
+    return typeof parsed === "string"
+      ? splitSkills(parsed)
+      : [];
+  } catch {
+    return splitSkills(value);
+  }
+};
+
 /* =====================================================
    GET PROFILE
 ===================================================== */
@@ -59,28 +95,13 @@ export const getProfile = async (req, res) => {
 
     const profile = rows[0];
 
-    let skills = [];
-
-    try {
-      skills = profile.skills
-        ? JSON.parse(profile.skills)
-        : [];
-    } catch {
-      skills = profile.skills
-        ? profile.skills
-            .split(",")
-            .map((skill) => skill.trim())
-            .filter(Boolean)
-        : [];
-    }
-
     return res.status(200).json({
       success: true,
       profileExists: true,
 
       profile: {
         ...profile,
-        skills,
+        skills: normalizeSkills(profile.skills),
       },
     });
   } catch (error) {
